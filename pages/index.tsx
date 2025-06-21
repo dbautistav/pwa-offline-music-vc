@@ -13,14 +13,14 @@ export default function Home() {
   const [tracks, setTracks] = useState<Track[]>([
     {
       id: '1',
-      name: 'Sample Track 1',
-      url: 'https://www.soundjay.com/misc/sounds-829.mp3',
+      name: 'Short Track 1',
+      url: './media/one-short.mp3',
       cached: false
     },
     {
       id: '2', 
-      name: 'Sample Track 2',
-      url: 'https://www.soundjay.com/misc/sounds-830.mp3',
+      name: 'Long Track 2',
+      url: './media/two-long.mp3',
       cached: false
     }
   ]);
