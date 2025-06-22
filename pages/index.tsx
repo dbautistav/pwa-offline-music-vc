@@ -9,8 +9,8 @@ interface Track {
   cached: boolean;
 }
 
-export default function Home() {
-  const [tracks, setTracks] = useState<Track[]>([
+const _getTrackInfo = (): Track[] => {
+  const trackInfo = [
     {
       id: '1',
       name: 'Short Track 1',
@@ -22,9 +22,34 @@ export default function Home() {
       name: 'Long Track 2',
       url: './media/two-long.mp3',
       cached: false
+    },
+    {
+      id: '3', 
+      name: 'Long Track 3',
+      url: './media/three-long.wav',
+      cached: false
     }
-  ]);
-  
+  ];
+
+  // Add the tracks from the noize archive - https://web.archive.org/web/20200830023255/https://noize.ml/
+  const numOfOriginalItems = trackInfo.length
+  for (let i = 1; i <= 10; i++) {
+    const id = (numOfOriginalItems + i).toString();
+    trackInfo.push({
+      id,
+      name: `Track ${id}`,
+      url: `./media/a${i}.mp3`,
+      cached: false
+    });
+  }
+
+  return trackInfo
+};
+
+const TRACKS: Track[] = _getTrackInfo()
+
+export default function Home() {
+  const [tracks, setTracks] = useState<Track[]>(TRACKS);
   const [isOnline, setIsOnline] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
 
