@@ -112,7 +112,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Offline MP3 Player</title>
+        <title>dev.focus()</title>
         <meta name="description" content="PWA for playing cached MP3 files offline" />
       </Head>
 
@@ -120,7 +120,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-4">Offline MP3 Player</h1>
+            <h1 className="text-3xl font-bold mb-4">Focus music</h1>
             
             {/* Status Indicators */}
             <div className="flex items-center space-x-4 mb-4">
@@ -152,6 +152,7 @@ export default function Home() {
           />
 
           {/* Instructions */}
+          {/*
           <div className="mt-8 p-4 bg-gray-800 rounded-lg">
             <h3 className="font-semibold mb-2">How to use:</h3>
             <ul className="text-sm text-gray-300 space-y-1">
@@ -161,6 +162,7 @@ export default function Home() {
               <li>• Replace sample URLs with your own MP3 files</li>
             </ul>
           </div>
+          */}
         </div>
       </div>
     </>
