@@ -93,3 +93,10 @@ public/          # Static assets, service worker, manifest
 - `next.config.js`: `basePath: "/pwa-offline-music-vc"`, `output: "export"`
 - `tsconfig.json`: `strict: false` (enable strict mode in future)
 - SWC minification enabled: `swcMinify: true`
+
+## Active Technologies
+- TypeScript 5+, React 18.2+, Next.js 14 (001-cdn-toggle-and-lucide-icons)
+- localStorage for toggle state persistence (001-cdn-toggle-and-lucide-icons)
+
+## Recent Changes
+- 001-cdn-toggle-and-lucide-icons: Added TypeScript 5+, React 18.2+, Next.js 14
