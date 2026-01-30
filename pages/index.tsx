@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AudioPlayer from '../components/AudioPlayer';
 
+type AudioSourceMode = 'local' | 'cdn';
+
 interface Track {
   id: string;
   name: string;
@@ -9,36 +11,57 @@ interface Track {
   cached: boolean;
 }
 
-const _getTrackInfo = (): Track[] => {
+const STORAGE_KEY_AUDIO_SOURCE_MODE = 'audioSourceMode';
+
+const getTrackUrl = (filename: string, mode: AudioSourceMode): string => {
+  if (mode === 'cdn') {
+    return `https://cdn.jsdelivr.net/gh/dbautistav/pwa-offline-music-vc@main/public/media/${filename}`;
+  }
+  return `./media/${filename}`;
+};
+
+const _getTrackInfo = (mode: AudioSourceMode): Track[] => {
   const trackInfo = [
     {
       id: '1',
       name: 'Short Track 1',
-      url: './media/one-short.mp3',
+      url: getTrackUrl('one-short.mp3', mode),
       cached: false
     },
     {
-      id: '2', 
+      id: '2',
       name: 'Long Track 2',
-      url: './media/two-long.mp3',
+      url: getTrackUrl('two-long.mp3', mode),
       cached: false
     },
     {
-      id: '3', 
+      id: '3',
       name: 'Long Track 3',
-      url: './media/three-long.wav',
+      url: getTrackUrl('three-long.wav', mode),
       cached: false
     }
   ];
 
   // Add the tracks from the noize archive - https://web.archive.org/web/20200830023255/https://noize.ml/
+  const noizeTitles = [
+    "Waterfall in a forest",
+    "Thunderstorm & Rain",
+    "Cafe Music",
+    "Brown Noise",
+    "Rainy Day",
+    "Medieval Town",
+    "Celestial Noise",
+    "Metropolis Soundscape",
+    "Snowy Blizzard",
+    "Forest Ambience"
+  ]
   const numOfOriginalItems = trackInfo.length
   for (let i = 1; i <= 10; i++) {
     const id = (numOfOriginalItems + i).toString();
     trackInfo.push({
       id,
-      name: `Track ${id}`,
-      url: `./media/a${i}.mp3`,
+      name: noizeTitles[i - 1],
+      url: getTrackUrl(`a${i}.mp3`, mode),
       cached: false
     });
   }
@@ -46,20 +69,38 @@ const _getTrackInfo = (): Track[] => {
   return trackInfo
 };
 
-const TRACKS: Track[] = _getTrackInfo()
-
 export default function Home() {
-  const [tracks, setTracks] = useState<Track[]>(TRACKS);
+  const [audioSourceMode, setAudioSourceMode] = useState<AudioSourceMode>('local');
   const [isOnline, setIsOnline] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [tracks, setTracks] = useState<Track[]>(_getTrackInfo('local'));
 
   useEffect(() => {
-    // Check online status
+    const savedMode = localStorage.getItem(STORAGE_KEY_AUDIO_SOURCE_MODE) as AudioSourceMode;
+    if (savedMode) {
+      setAudioSourceMode(savedMode);
+      setTracks(_getTrackInfo(savedMode));
+    }
+  }, []);
+
+  const handleToggleMode = (mode: AudioSourceMode) => {
+    setAudioSourceMode(mode);
+    localStorage.setItem(STORAGE_KEY_AUDIO_SOURCE_MODE, mode);
+    setTracks(_getTrackInfo(mode));
+  };
+
+  useEffect(() => {
+    if (!isOnline && audioSourceMode === 'cdn') {
+      handleToggleMode('local');
+    }
+  }, [isOnline, audioSourceMode]);
+
+  useEffect(() => {
     setIsOnline(navigator.onLine);
-    
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
@@ -75,8 +116,8 @@ export default function Home() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data && event.data.type === 'MP3_CACHED') {
-          setTracks(prev => prev.map(track => 
-            track.url === event.data.url 
+          setTracks(prev => prev.map(track =>
+            track.url === event.data.url
               ? { ...track, cached: true }
               : track
           ));
@@ -121,14 +162,47 @@ export default function Home() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Focus music</h1>
-            
+
+            {/* Audio Source Toggle */}
+            <div className="flex items-center space-x-4 mb-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="audioSource"
+                  value="local"
+                  checked={audioSourceMode === 'local'}
+                  onChange={() => handleToggleMode('local')}
+                  disabled={!isOnline}
+                  className="w-4 h-4"
+                />
+                <span className={!isOnline && audioSourceMode !== 'local' ? 'text-gray-500' : ''}>
+                  Local
+                </span>
+              </label>
+
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="audioSource"
+                  value="cdn"
+                  checked={audioSourceMode === 'cdn'}
+                  onChange={() => handleToggleMode('cdn')}
+                  disabled={!isOnline}
+                  className="w-4 h-4"
+                />
+                <span className={!isOnline ? 'text-gray-500' : ''}>
+                  CDN
+                </span>
+              </label>
+            </div>
+
             {/* Status Indicators */}
             <div className="flex items-center space-x-4 mb-4">
               <div className={`flex items-center space-x-2 ${isOnline ? 'text-green-400' : 'text-red-400'}`}>
                 <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-400' : 'bg-red-400'}`} />
                 <span>{isOnline ? 'Online' : 'Offline'}</span>
               </div>
-              
+
               {installPrompt && (
                 <button
                   onClick={handleInstallApp}
@@ -138,9 +212,9 @@ export default function Home() {
                 </button>
               )}
             </div>
-            
+
             <p className="text-gray-400">
-              Cache your favorite MP3 files for offline listening. 
+              Cache your favorite MP3 files for offline listening.
               {!isOnline && ' You are currently offline - only cached tracks will play.'}
             </p>
           </div>
@@ -150,19 +224,6 @@ export default function Home() {
             tracks={tracks} 
             onCacheTrack={handleCacheTrack}
           />
-
-          {/* Instructions */}
-          {/*
-          <div className="mt-8 p-4 bg-gray-800 rounded-lg">
-            <h3 className="font-semibold mb-2">How to use:</h3>
-            <ul className="text-sm text-gray-300 space-y-1">
-              <li>• Click "Cache Offline" to download tracks for offline use</li>
-              <li>• Cached tracks will work even when you're offline</li>
-              <li>• Install this app to your device for the best experience</li>
-              <li>• Replace sample URLs with your own MP3 files</li>
-            </ul>
-          </div>
-          */}
         </div>
       </div>
     </>

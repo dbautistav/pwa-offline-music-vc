@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // COMMENT OUT THE FOLLOWING FILES FOR LOCAL DEVELOPMENT!
     // https://www.freecodecamp.org/news/how-to-deploy-next-js-app-to-github-pages/
     basePath: "/pwa-offline-music-vc",
     output: "export",  // <=== enables static exports
+  // ------------------------------------------------------
 
     reactStrictMode: true,
     swcMinify: true,

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Play, Pause, SkipBack, SkipForward, Download } from 'lucide-react';
 
 interface Track {
   id: string;
@@ -125,7 +126,7 @@ export default function AudioPlayer({
             onClick={() => seek(Math.max(0, currentTime - 10))}
             className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
           >
-            ⏪ 10s
+            <SkipBack className="w-5 h-5 inline" /> 10s
           </button>
           <button
             onClick={() =>
@@ -133,13 +134,17 @@ export default function AudioPlayer({
             }
             className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-500"
           >
-            {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+            {isPlaying ? (
+              <><Pause className="w-5 h-5 inline" /> Pause</>
+            ) : (
+              <><Play className="w-5 h-5 inline" /> Play</>
+            )}
           </button>
           <button
             onClick={() => seek(Math.min(duration, currentTime + 10))}
             className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
           >
-            10s ⏩
+            10s <SkipForward className="w-5 h-5 inline" />
           </button>
         </div>
       </div>
@@ -162,11 +167,15 @@ export default function AudioPlayer({
                   onClick={() => playTrack(track)}
                   className="w-8 h-8 flex items-center justify-center bg-blue-500 rounded-full hover:bg-blue-400"
                 >
-                  {currentTrack?.id === track.id && isPlaying ? '⏸️' : '▶️'}
+                  {currentTrack?.id === track.id && isPlaying ? (
+                    <Pause className="w-4 h-4" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
                 </button>
                 <span>{track.name}</span>
                 {track.cached && (
-                  <span className="text-green-400 text-sm">📱 Cached</span>
+                  <Download className="w-4 h-4 text-green-400" />
                 )}
               </div>
 
