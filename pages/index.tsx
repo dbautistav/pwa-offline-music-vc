@@ -15,7 +15,7 @@ const STORAGE_KEY_AUDIO_SOURCE_MODE = 'audioSourceMode';
 
 const getTrackUrl = (filename: string, mode: AudioSourceMode): string => {
   if (mode === 'cdn') {
-    return `https://cdn.jsdelivr.net/gh/dbautistav/pwa-offline-music-vc@05364cc7c11d7d9cfcc3ea6712f76e083fc5e25c/public/media/${filename}`;
+    return `https://cdn.jsdelivr.net/gh/{USER}/{REPO}@{VERSION}/public/media/${filename}`;
   }
   return `./media/${filename}`;
 };
