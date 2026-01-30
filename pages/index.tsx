@@ -32,12 +32,24 @@ const _getTrackInfo = (): Track[] => {
   ];
 
   // Add the tracks from the noize archive - https://web.archive.org/web/20200830023255/https://noize.ml/
+  const noizeTitles = [
+    "Waterfall in a forest",
+    "Thunderstorm & Rain",
+    "Cafe Music",
+    "Brown Noise",
+    "Rainy Day",
+    "Medieval Town",
+    "Celestial Noise",
+    "Metropolis Soundscape",
+    "Snowy Blizzard",
+    "Forest Ambience"
+  ]
   const numOfOriginalItems = trackInfo.length
   for (let i = 1; i <= 10; i++) {
     const id = (numOfOriginalItems + i).toString();
     trackInfo.push({
       id,
-      name: `Track ${id}`,
+      name: noizeTitles[i - 1],
       url: `./media/a${i}.mp3`,
       cached: false
     });
