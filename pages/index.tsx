@@ -15,32 +15,15 @@ const STORAGE_KEY_AUDIO_SOURCE_MODE = 'audioSourceMode';
 
 const getTrackUrl = (filename: string, mode: AudioSourceMode): string => {
   if (mode === 'cdn') {
-    return `https://cdn.jsdelivr.net/gh/dbautistav/pwa-offline-music-vc@main/public/media/${filename}`;
+    return `https://cdn.jsdelivr.net/gh/{USER}/{REPO}@{VERSION}/public/media/${filename}`;
   }
   return `./media/${filename}`;
 };
 
 const _getTrackInfo = (mode: AudioSourceMode): Track[] => {
-  const trackInfo = [
-    {
-      id: '1',
-      name: 'Short Track 1',
-      url: getTrackUrl('one-short.mp3', mode),
-      cached: false
-    },
-    {
-      id: '2',
-      name: 'Long Track 2',
-      url: getTrackUrl('two-long.mp3', mode),
-      cached: false
-    },
-    {
-      id: '3',
-      name: 'Long Track 3',
-      url: getTrackUrl('three-long.wav', mode),
-      cached: false
-    }
-  ];
+  const trackInfo = []
+
+  const getTrackSoftId = (index: number): string => (trackInfo.length + index).toString()
 
   // Add the tracks from the noize archive - https://web.archive.org/web/20200830023255/https://noize.ml/
   const noizeTitles = [
@@ -55,16 +38,35 @@ const _getTrackInfo = (mode: AudioSourceMode): Track[] => {
     "Snowy Blizzard",
     "Forest Ambience"
   ]
-  const numOfOriginalItems = trackInfo.length
   for (let i = 1; i <= 10; i++) {
-    const id = (numOfOriginalItems + i).toString();
     trackInfo.push({
-      id,
+      id: getTrackSoftId(i),
       name: noizeTitles[i - 1],
       url: getTrackUrl(`a${i}.mp3`, mode),
       cached: false
     });
   }
+
+  trackInfo.push(
+    {
+      id: getTrackSoftId(1),
+      name: 'Short Track 1',
+      url: getTrackUrl('one-short.mp3', mode),
+      cached: false
+    },
+    {
+      id: getTrackSoftId(2),
+      name: 'Long Track 2',
+      url: getTrackUrl('two-long.mp3', mode),
+      cached: false
+    },
+    {
+      id: getTrackSoftId(3),
+      name: 'Long Track 3',
+      url: getTrackUrl('three-long.wav', mode),
+      cached: false
+    }
+  )
 
   return trackInfo
 };
@@ -162,39 +164,6 @@ export default function Home() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Focus music</h1>
-
-            {/* Audio Source Toggle */}
-            <div className="flex items-center space-x-4 mb-4">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="audioSource"
-                  value="local"
-                  checked={audioSourceMode === 'local'}
-                  onChange={() => handleToggleMode('local')}
-                  disabled={!isOnline}
-                  className="w-4 h-4"
-                />
-                <span className={!isOnline && audioSourceMode !== 'local' ? 'text-gray-500' : ''}>
-                  Local
-                </span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="audioSource"
-                  value="cdn"
-                  checked={audioSourceMode === 'cdn'}
-                  onChange={() => handleToggleMode('cdn')}
-                  disabled={!isOnline}
-                  className="w-4 h-4"
-                />
-                <span className={!isOnline ? 'text-gray-500' : ''}>
-                  CDN
-                </span>
-              </label>
-            </div>
 
             {/* Status Indicators */}
             <div className="flex items-center space-x-4 mb-4">
