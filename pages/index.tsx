@@ -165,39 +165,6 @@ export default function Home() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Focus music</h1>
 
-            {/* Audio Source Toggle */}
-            <div className="flex items-center space-x-4 mb-4">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="audioSource"
-                  value="local"
-                  checked={audioSourceMode === 'local'}
-                  onChange={() => handleToggleMode('local')}
-                  disabled={!isOnline}
-                  className="w-4 h-4"
-                />
-                <span className={!isOnline && audioSourceMode !== 'local' ? 'text-gray-500' : ''}>
-                  Local
-                </span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="audioSource"
-                  value="cdn"
-                  checked={audioSourceMode === 'cdn'}
-                  onChange={() => handleToggleMode('cdn')}
-                  disabled={!isOnline}
-                  className="w-4 h-4"
-                />
-                <span className={!isOnline ? 'text-gray-500' : ''}>
-                  CDN
-                </span>
-              </label>
-            </div>
-
             {/* Status Indicators */}
             <div className="flex items-center space-x-4 mb-4">
               <div className={`flex items-center space-x-2 ${isOnline ? 'text-green-400' : 'text-red-400'}`}>
